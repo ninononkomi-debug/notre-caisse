@@ -44,16 +44,18 @@ jobs:
         run: npx cap sync android
       - name: Clé de signature
         env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASS: ${{ secrets.KEYSTORE_PASS }}
         run: |
-          if [ -n "$KEYSTORE_BASE64" ]; then
-            printf "%s" "$KEYSTORE_BASE64" | tr -d ' \r\n\t"' | base64 -d > "$RUNNER_TEMP/caisse.jks" || { echo "::error::Le secret KEYSTORE_BASE64 est mal copié"; exit 1; }
-            echo "Taille de la clé : $(wc -c < "$RUNNER_TEMP/caisse.jks") octets (attendu 2 700 environ)"
+          if [ -n "$KEYSTORE_PASS" ]; then
+            P=$(printf "%s" "$KEYSTORE_PASS" | tr -d ' \r\n\t')
+            openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 -in android/caisse.jks.enc -out "$RUNNER_TEMP/caisse.jks" -pass pass:"$P" || { echo "::error::Le secret KEYSTORE_PASS est incorrect"; exit 1; }
             echo "KEYSTORE_FILE=$RUNNER_TEMP/caisse.jks" >> "$GITHUB_ENV"
+          else
+            echo "::warning::Pas de secret KEYSTORE_PASS : APK de test non signée avec la clé définitive"
           fi
       - name: Compiler l'APK
         env:
-          # le mot de passe seul ne sert à rien sans la clé (secret KEYSTORE_BASE64)
+          # mot de passe interne de la clé ; la clé elle-même est chiffrée (secret KEYSTORE_PASS)
           KEYSTORE_PASSWORD: lcq-Sieq0q0IAgtu0uUdWSFZxwr0E-1k
           KEY_ALIAS: notrecaisse
           KEY_PASSWORD: lcq-Sieq0q0IAgtu0uUdWSFZxwr0E-1k
@@ -69,6 +71,7 @@ jobs:
           name: Notre-Caisse-apk
           path: Notre-Caisse.apk
       - name: Publier la version
+        if: env.KEYSTORE_FILE != ''
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v1.0.${{ github.run_number }}
