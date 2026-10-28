@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Users, Crown, Clock } from 'lucide-react';
 import { useStore } from '../lib/store.js';
 import { api, frError } from '../lib/api.js';
@@ -15,6 +15,8 @@ export default function Onboarding({ onLogout }) {
   const [pick, setPick] = useState('');
   const [newName, setNewName] = useState(s.user.user_metadata?.display_name || '');
   const [busy, setBusy] = useState(false);
+  const [exists, setExists] = useState(null);
+  useEffect(() => { api.caisseExists().then(setExists).catch(() => setExists(false)); }, []);
   const run = async (fn) => { setBusy(true); try { await fn(); } catch (e) { toast(frError(e), 'err'); } finally { setBusy(false); } };
 
   if (s.pending) {
@@ -52,11 +54,12 @@ export default function Onboarding({ onLogout }) {
     <div className="onb">
       <FamilyArt width={240} />
       <h1>Bienvenue dans Notre Caisse</h1>
-      <p className="muted">La caisse de la famille, transparente et à jour, dans votre téléphone.</p>
+      <p className="muted">Ensemble, solidaires : la caisse de la famille, transparente et à jour.</p>
       {!mode && (
         <>
           <button className="choice" onClick={() => setMode('join')}><Users size={26} /><span><b>Rejoindre ma famille</b><small>J'ai reçu un code dans le groupe</small></span></button>
-          <button className="choice" onClick={() => setMode('create')}><Crown size={26} /><span><b>Créer la caisse</b><small>Réservé à la trésorière, une seule fois</small></span></button>
+          {exists === false && <button className="choice" onClick={() => setMode('create')}><Crown size={26} /><span><b>Créer la caisse</b><small>Réservé à la trésorière, une seule fois</small></span></button>}
+          <p className="muted small">Demandez le code de la famille à une trésorière (il est dans le message d'invitation du groupe WhatsApp).</p>
           <button className="link" onClick={onLogout}>Se déconnecter</button>
         </>
       )}

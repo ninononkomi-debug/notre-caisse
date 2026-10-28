@@ -1,41 +1,48 @@
 import React from 'react';
 
-// Logo : une caisse (tirelire) aux couleurs du Gabon, avec une pièce
+// Mains solidaires qui portent un cœur — bordeaux et or
+const HEART = 'M48 58 C 30 46, 30 28, 41 28 C 45 28, 47 31, 48 33 C 49 31, 51 28, 55 28 C 66 28, 66 46, 48 58 Z';
+const HAND = 'M10 60 C 14 54, 20 52, 26 54 L 40 59 C 44 60.5, 45 64.5, 41.5 66 L 31 64 C 33 67, 38 70, 46 71 L 46 80 C 32 80, 22 75, 16 70 L 10 70 Z';
+
+function Glyph({ heart = '#FFF4E2', hands = '#E0A526' }) {
+  return (
+    <>
+      <path d={HEART} fill={heart} />
+      <g fill={hands}>
+        <path d={HAND} />
+        <g transform="translate(96 0) scale(-1 1)"><path d={HAND} /></g>
+      </g>
+    </>
+  );
+}
+
 export function Logo({ size = 48 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 96 96" role="img" aria-label="Notre Caisse">
-      <rect width="96" height="96" rx="26" fill="#009E60" />
-      <rect y="62" width="96" height="11" fill="#FCD116" />
-      <path d="M0 73h96v-0 0 0v9a14 14 0 0 1-14 14H14A14 14 0 0 1 0 82z" fill="#3A75C4" />
-      <ellipse cx="48" cy="44" rx="25" ry="19" fill="#FFFFFF" />
-      <rect x="40" y="27" width="16" height="4" rx="2" fill="#009E60" />
-      <circle cx="61" cy="40" r="2.6" fill="#009E60" />
-      <path d="M26 46c-4 0-6-3-6-6" stroke="#FFFFFF" strokeWidth="4" strokeLinecap="round" fill="none" />
-      <circle cx="48" cy="15" r="8" fill="#FCD116" stroke="#FFFFFF" strokeWidth="2.5" />
+      <rect width="96" height="96" rx="26" fill="#7A1E3A" />
+      <Glyph />
     </svg>
   );
 }
 
-// Illustration : famille réunie autour de la caisse
-export function FamilyArt({ width = 260 }) {
-  const people = [
-    [40, '#3A75C4'], [80, '#FCD116'], [180, '#FCD116'], [220, '#3A75C4'],
-  ];
+// Grande illustration : mains solidaires, cœur et pièces
+export function FamilyArt({ width = 240 }) {
   return (
-    <svg width={width} viewBox="0 0 260 150" role="img" aria-label="La famille réunie autour de la caisse">
-      <ellipse cx="130" cy="138" rx="120" ry="10" fill="currentColor" opacity="0.08" />
-      {people.map(([x, c], i) => (
-        <g key={i}>
-          <circle cx={x} cy={i % 3 === 0 ? 52 : 44} r="15" fill={c} />
-          <path d={`M${x - 20} 135v-38a20 20 0 0 1 40 0v38z`} transform={`translate(0 ${i % 3 === 0 ? 8 : 0})`} fill={c} />
-        </g>
-      ))}
-      <path d="M58 100 Q 130 130 202 100" stroke="#009E60" strokeWidth="6" strokeLinecap="round" fill="none" />
-      <ellipse cx="130" cy="104" rx="34" ry="26" fill="#009E60" />
-      <rect x="120" y="80" width="20" height="5" rx="2.5" fill="#FFFFFF" />
-      <circle cx="148" cy="98" r="3" fill="#FFFFFF" />
-      <circle cx="130" cy="58" r="11" fill="#FCD116" stroke="#009E60" strokeWidth="3" />
-      <text x="130" y="62.5" textAnchor="middle" fontSize="12" fontWeight="800" fill="#009E60">F</text>
+    <svg width={width} viewBox="0 0 240 170" role="img" aria-label="Des mains solidaires qui portent un cœur">
+      <circle cx="120" cy="88" r="78" fill="#F6E7D3" />
+      <circle cx="120" cy="88" r="58" fill="#EFD5B5" opacity="0.7" />
+      <g transform="translate(48 18) scale(1.5)">
+        <Glyph heart="#7A1E3A" hands="#E0A526" />
+      </g>
+      <g fill="#E0A526" stroke="#B9831A" strokeWidth="2">
+        <circle cx="40" cy="44" r="10" />
+        <circle cx="205" cy="58" r="8" />
+        <circle cx="196" cy="128" r="6" />
+      </g>
+      <g fill="#7A1E3A" opacity="0.85">
+        <circle cx="28" cy="118" r="5" />
+        <circle cx="214" cy="96" r="4" />
+      </g>
     </svg>
   );
 }

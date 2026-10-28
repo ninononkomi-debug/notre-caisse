@@ -5,6 +5,6 @@
   "android": { "allowMixedContent": false, "webContentsDebuggingEnabled": false },
   "plugins": {
     "SystemBars": { "insetsHandling": "css", "style": "DEFAULT" },
-    "LocalNotifications": { "smallIcon": "ic_stat_caisse", "iconColor": "#009E60" }
+    "LocalNotifications": { "smallIcon": "ic_stat_caisse", "iconColor": "#7A1E3A" }
   }
 }

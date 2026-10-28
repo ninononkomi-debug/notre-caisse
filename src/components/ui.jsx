@@ -85,7 +85,7 @@ export function Segmented({ value, onChange, options }) {
   );
 }
 
-const AV_COLORS = ['#009E60', '#3A75C4', '#C99A00', '#0F766E', '#7C3AED', '#DB2777', '#EA580C', '#1D4ED8'];
+const AV_COLORS = ['#7A1E3A', '#B9831A', '#9F3A55', '#8C5A2B', '#5C1529', '#C2410C', '#6D4C41', '#A16207'];
 export function Avatar({ name = '?', size = 42 }) {
   const i = [...name].reduce((s, c) => s + c.charCodeAt(0), 0) % AV_COLORS.length;
   const ini = name.split(/\s+/).filter(Boolean).slice(-2).map((w) => w[0]).join('').toUpperCase().slice(0, 2);
@@ -172,4 +172,4 @@ export function compressImage(file, max = 1400, quality = 0.75) {
   });
 }
 
-export const Stripe = () => <div className="gabon-stripe" aria-hidden="true"><i /><i /><i /></div>;
+export const Stripe = () => <div className="gabon-stripe" aria-hidden="true" />;

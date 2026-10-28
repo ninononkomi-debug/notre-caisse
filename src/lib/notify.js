@@ -5,7 +5,7 @@ import { money, monthLabel, addMonths, num, today } from './format.js';
 
 let channelDone = false;
 let timer = null;
-const BASE = { channelId: 'caisse', smallIcon: 'ic_stat_caisse', iconColor: '#009E60' };
+const BASE = { channelId: 'caisse', smallIcon: 'ic_stat_caisse', iconColor: '#7A1E3A' };
 
 export async function requestNotifPermission() {
   if (!isNative) return false;

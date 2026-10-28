@@ -19,6 +19,7 @@ export function frError(e) {
     [/Code invalide/i, 'Code de la famille invalide.'],
     [/déjà pris/i, 'Ce nom est déjà demandé par quelqu’un d’autre.'],
     [/Déjà membre/i, 'Vous êtes déjà membre de cette caisse.'],
+    [/Caisse existe déjà/i, 'La caisse de la famille existe déjà : choisissez « Rejoindre ma famille » avec le code.'],
     [/row-level security|Accès refusé|permission/i, "Action réservée aux trésorières."],
   ];
   for (const [r, t] of map) if (r.test(m)) return t;
@@ -47,6 +48,11 @@ const remote = {
     const { data, error } = await supabase.rpc('create_caisse', { p_name: name, p_member_name: memberName, p_start_month: startMonth });
     if (error) throw error;
     return data;
+  },
+  async caisseExists() {
+    const { data, error } = await supabase.rpc('caisse_exists');
+    if (error) return false;
+    return !!data;
   },
   async preview(code) {
     const { data, error } = await supabase.rpc('caisse_preview', { p_code: code });
@@ -133,6 +139,7 @@ const local = {
     save(d);
     return c;
   },
+  async caisseExists() { return ldb().caisses.length > 0; },
   async preview() { return []; },
   async join() { throw new Error('Indisponible en mode test'); },
   async approve(id, accept) { const d = ldb(); const m = d.members.find((x) => x.id === id); if (accept) { m.user_id = m.pending_user_id; } m.pending_user_id = null; save(d); },
