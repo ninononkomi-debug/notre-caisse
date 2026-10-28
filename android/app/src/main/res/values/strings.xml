@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Notre Caisse</string>
+    <string name="title_activity_main">Notre Caisse</string>
+    <string name="package_name">com.mackita.notrecaisse</string>
+    <string name="custom_url_scheme">com.mackita.notrecaisse</string>
+</resources>

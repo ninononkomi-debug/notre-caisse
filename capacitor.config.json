@@ -1,0 +1,10 @@
+{
+  "appId": "com.mackita.notrecaisse",
+  "appName": "Notre Caisse",
+  "webDir": "dist",
+  "android": { "allowMixedContent": false, "webContentsDebuggingEnabled": false },
+  "plugins": {
+    "SystemBars": { "insetsHandling": "css", "style": "DEFAULT" },
+    "LocalNotifications": { "smallIcon": "ic_stat_caisse", "iconColor": "#009E60" }
+  }
+}
