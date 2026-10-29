@@ -1,6 +1,7 @@
 export const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://hlgbwayuvoobwsmkwjww.supabase.co';
 export const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_dgvl8vEauMH1EiYn23IJHg_f6qPxsM0';
-export const LOCAL_MODE = import.meta.env.VITE_LOCAL === '1' || !SUPABASE_URL || !SUPABASE_ANON_KEY;
+export const DEMO_MODE = import.meta.env.VITE_DEMO === '1';
+export const LOCAL_MODE = DEMO_MODE || import.meta.env.VITE_LOCAL === '1' || !SUPABASE_URL || !SUPABASE_ANON_KEY;
 export const APP_VERSION = import.meta.env.VITE_APP_VERSION || '1.0';
 export const GH_REPO = import.meta.env.VITE_GH_REPO || 'ninononkomi-debug/notre-caisse';
 

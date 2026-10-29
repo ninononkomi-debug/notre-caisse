@@ -1,4 +1,4 @@
-import { GH_REPO, APP_VERSION } from '../config.js';
+import { GH_REPO, APP_VERSION, DEMO_MODE } from '../config.js';
 import { isNative } from './security.js';
 
 const cmp = (a, b) => {
@@ -8,7 +8,7 @@ const cmp = (a, b) => {
   return 0;
 };
 
-export const apkUrl = () => `https://github.com/${GH_REPO}/releases/latest/download/Notre-Caisse.apk`;
+export const apkUrl = () => `https://github.com/${GH_REPO}/releases/latest/download/${DEMO_MODE ? 'Caisse-Demo' : 'Notre-Caisse'}.apk`;
 
 export async function checkUpdate(force = false) {
   if (!GH_REPO || !isNative) return null;

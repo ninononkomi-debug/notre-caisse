@@ -1,6 +1,7 @@
 // Accès aux données : Supabase en vrai, ou base locale (mode test sans serveur)
 import { createClient } from '@supabase/supabase-js';
-import { SUPABASE_URL, SUPABASE_ANON_KEY, LOCAL_MODE } from '../config.js';
+import { SUPABASE_URL, SUPABASE_ANON_KEY, LOCAL_MODE, DEMO_MODE } from '../config.js';
+import { buildDemoDb, DEMO_PROOF } from './demo.js';
 import { uid } from './format.js';
 
 export const supabase = LOCAL_MODE ? null : createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
@@ -119,10 +120,11 @@ const remote = {
 
 // ======================= Mode test local =======================
 const KEY = 'nc:localdb';
-const ldb = () => { try { return JSON.parse(localStorage.getItem(KEY)) || { caisses: [], members: [], deposits: [], withdrawals: [], announcements: [], profiles: [], images: {} }; } catch (e) { return { caisses: [], members: [], deposits: [], withdrawals: [], announcements: [], profiles: [], images: {} }; } };
+const ldb = () => { if (DEMO_MODE) { let raw = null; try { raw = localStorage.getItem(KEY); } catch (e) { /* */ } if (!raw) { const d = buildDemoDb(); save(d); return d; } } try { return JSON.parse(localStorage.getItem(KEY)) || { caisses: [], members: [], deposits: [], withdrawals: [], announcements: [], profiles: [], images: {} }; } catch (e) { return { caisses: [], members: [], deposits: [], withdrawals: [], announcements: [], profiles: [], images: {} }; } };
 const save = (d) => { try { localStorage.setItem(KEY, JSON.stringify(d)); } catch (e) { /* */ } };
 const now = () => new Date().toISOString();
-export const LOCAL_USER = { id: 'local-user', email: 'test@local', user_metadata: { display_name: 'Orly' }, local: true };
+export const LOCAL_USER = { id: 'local-user', email: DEMO_MODE ? 'demo@notrecaisse' : 'test@local', user_metadata: { display_name: DEMO_MODE ? 'Sandrine' : 'Orly' }, local: true };
+export function resetDemo() { try { localStorage.removeItem(KEY); Object.keys(localStorage).filter((k) => k.startsWith('nc:')).forEach((k) => localStorage.removeItem(k)); } catch (e) { /* */ } }
 
 const local = {
   async myMemberships(userId) { return ldb().members.filter((m) => m.user_id === userId || m.pending_user_id === userId); },
@@ -158,7 +160,7 @@ const local = {
   async insertMany(table, rows) { const out = []; for (const r of rows) out.push(await local.upsert(table, r)); return out; },
   async remove(table, id) { const d = ldb(); d[table] = d[table].filter((x) => x.id !== id); save(d); },
   async uploadImage(caisseId, userId, dataUrl) { const d = ldb(); const k = uid(); d.images[k] = dataUrl; save(d); return k; },
-  async imageUrl(path) { return ldb().images[path] || null; },
+  async imageUrl(path) { if (path === 'demo-proof') return DEMO_PROOF; return ldb().images[path] || null; },
   async updateProfile(userId, patch) { const d = ldb(); const p = d.profiles.find((x) => x.id === userId); if (p) Object.assign(p, patch); else d.profiles.push({ id: userId, ...patch }); save(d); },
   subscribe() { return () => {}; },
 };

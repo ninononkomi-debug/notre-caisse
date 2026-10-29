@@ -66,6 +66,23 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleRelease --no-daemon --stacktrace
           cp app/build/outputs/apk/release/app-release.apk ../Notre-Caisse.apk
+      - name: APK de démonstration
+        if: env.KEYSTORE_FILE != ''
+        env:
+          KEYSTORE_PASSWORD: lcq-Sieq0q0IAgtu0uUdWSFZxwr0E-1k
+          KEY_ALIAS: notrecaisse
+          KEY_PASSWORD: lcq-Sieq0q0IAgtu0uUdWSFZxwr0E-1k
+          VITE_DEMO: '1'
+          VERSION_CODE: ${{ github.run_number }}
+          VERSION_NAME: 1.0.${{ github.run_number }}
+        run: |
+          npm run build
+          sed -i 's/applicationId "com.mackita.notrecaisse"/applicationId "com.mackita.caissedemo"/' android/app/build.gradle
+          sed -i 's#>Notre Caisse</string>#>Caisse Démo</string>#g' android/app/src/main/res/values/strings.xml
+          npx cap copy android
+          cd android
+          ./gradlew assembleRelease --no-daemon
+          cp app/build/outputs/apk/release/app-release.apk ../Caisse-Demo.apk
       - uses: actions/upload-artifact@v4
         with:
           name: Notre-Caisse-apk
@@ -77,7 +94,9 @@ jobs:
           tag_name: v1.0.${{ github.run_number }}
           name: Notre Caisse 1.0.${{ github.run_number }}
           body: "Téléchargez **Notre-Caisse.apk** ci-dessous et ouvrez-le sur votre téléphone Android."
-          files: Notre-Caisse.apk
+          files: |
+            Notre-Caisse.apk
+            Caisse-Demo.apk
           make_latest: true
 
   web:

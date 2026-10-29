@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { ChevronRight, LogOut, Share2, Copy, Trash2, Plus as PlusIc, Megaphone } from 'lucide-react';
 import { Share } from '@capacitor/share';
 import { useStore, LOCAL_MODE } from '../lib/store.js';
-import { api, supabase, frError } from '../lib/api.js';
+import { api, supabase, frError, resetDemo } from '../lib/api.js';
+import { DEMO_MODE } from '../config.js';
 import { settingsOf, CATEGORIES, amountFor } from '../lib/logic.js';
 import { getPrefs, setPrefs, setPin, biometryAvailable, biometryAuth, isNative } from '../lib/security.js';
 import { requestNotifPermission, refreshNotifications } from '../lib/notify.js';
@@ -52,6 +53,14 @@ export default function PlusScreen({ go, onLogout }) {
           </div>
         </>
       )}
+      {DEMO_MODE && (
+        <section className="card demo-box">
+          <h3 className="card-t">Version de démonstration</h3>
+          <p className="muted small">Montrez l'application des deux côtés : la trésorière qui valide, et le membre qui consulte et déclare ses dépôts.</p>
+          <Segmented value={s.me?.role || 'tresoriere'} onChange={async (v) => { await api.upsert('members', { id: s.me.id, role: v }); s.refresh(); }} options={[['tresoriere', 'Vue trésorière'], ['membre', 'Vue membre']]} />
+          <button className="btn ghost full" onClick={() => setSheet('reset')}>Remettre la démo à zéro</button>
+        </section>
+      )}
       <h3 className="sec-t">Mon compte</h3>
       <div className="card list">
         {!LOCAL_MODE && <Row icon="👤" label="Mon profil" value="Prénom et téléphone" onClick={() => setSheet('profil')} />}
@@ -68,6 +77,7 @@ export default function PlusScreen({ go, onLogout }) {
       {sheet === 'profil' && <ProfilSheet onClose={() => setSheet(null)} />}
       {sheet === 'pin' && <PinSheet onClose={() => setSheet(null)} />}
       {sheet === 'notif' && <NotifSheet onClose={() => setSheet(null)} />}
+      {sheet === 'reset' && <Confirm text="Effacer vos essais et revenir aux données de démonstration ?" yes="Remettre à zéro" onNo={() => setSheet(null)} onYes={() => { resetDemo(); window.location.reload(); }} />}
       {sheet === 'logout' && <Confirm text="Se déconnecter ?" yes="Déconnexion" onNo={() => setSheet(null)} onYes={onLogout} />}
     </div>
   );

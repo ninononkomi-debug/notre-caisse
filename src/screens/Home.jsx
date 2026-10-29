@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { checkUpdate, apkUrl } from '../lib/update.js';
+import { DEMO_MODE } from '../config.js';
 import { Copy, RefreshCw, CloudOff, ChevronRight, Megaphone, ShieldCheck, Phone, Clock, XCircle, CheckCircle2 } from 'lucide-react';
 import { useStore } from '../lib/store.js';
 import { memberStatus, caisseBalance, monthSummary, settingsOf, displayMonth } from '../lib/logic.js';
@@ -23,7 +24,7 @@ export default function Home({ go, openDeposit }) {
   const set = settingsOf(caisse);
   const bal = caisseBalance(caisse, s.deposits, s.withdrawals);
   const camp = displayMonth(caisse);
-  const sum = monthSummary(caisse, s.members.filter((m) => m.active), s.deposits);
+  const sum = monthSummary(caisse, s.members.filter((m) => m.active && (m.user_id || !m.pending_user_id)), s.deposits);
   const myS = me ? memberStatus(me, caisse, s.deposits) : null;
   const couple = me?.couple_with ? s.member(me.couple_with) : null;
   const toValidate = s.deposits.filter((d) => d.status === 'en_attente');
@@ -42,6 +43,7 @@ export default function Home({ go, openDeposit }) {
           {s.offline ? <CloudOff size={20} /> : <RefreshCw size={20} />}
         </button>
       </header>
+      {DEMO_MODE && <div className="demo-banner">Démonstration · famille et chiffres fictifs · <button className="link" onClick={() => go('plus')}>Changer de vue</button></div>}
       {upd && <button className="alert-row info" onClick={() => window.open(apkUrl(), '_blank')}><RefreshCw size={18} /><span className="grow">Nouvelle version {upd} disponible : appuyez pour l'installer</span></button>}
       {s.offline && <div className="alert warn">Pas de connexion : affichage des dernières données connues.</div>}
 
