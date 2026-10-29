@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=540">
+<title>Studio vidéo</title>
+<link rel="stylesheet" href="./fonts.css">
+<style>
+  :root { --c: #7A1E3A; --a: #E0A526; --ink: #ffffff; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 540px; height: 960px; overflow: hidden; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
+  body { background: var(--c); position: relative; }
+  .bg1 { position: absolute; width: 520px; height: 520px; border-radius: 50%; background: rgba(255,255,255,.07); right: -220px; top: -160px; }
+  .bg2 { position: absolute; width: 360px; height: 360px; border-radius: 50%; background: var(--a); opacity: .18; left: -160px; bottom: -80px; }
+  .cap { position: absolute; left: 24px; right: 24px; top: 26px; height: 92px; display: flex; align-items: center; justify-content: center; text-align: center; color: var(--ink); font-size: 27px; line-height: 1.15; font-weight: 800; letter-spacing: -.01em; transition: opacity .35s, transform .35s; }
+  .cap.hide { opacity: 0; transform: translateY(-10px); }
+  .cap em { font-style: normal; color: var(--a); }
+  .phone { position: absolute; left: 65px; top: 128px; width: 410px; height: 820px; border-radius: 46px; background: #0B0B0F; padding: 10px; box-shadow: 0 30px 60px rgba(0,0,0,.35); }
+  .screen { position: relative; width: 390px; height: 800px; border-radius: 36px; overflow: hidden; background: #fff; }
+  iframe { width: 390px; height: 800px; border: 0; display: block; transform-origin: top left; }
+  .tap { position: absolute; width: 54px; height: 54px; margin: -27px 0 0 -27px; border-radius: 50%; background: rgba(255,255,255,.55); border: 3px solid rgba(0,0,0,.25); pointer-events: none; opacity: 0; z-index: 5; }
+  .tap.go { animation: tap .6s ease-out; }
+  @keyframes tap { 0% { opacity: 0; transform: scale(.4); } 25% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.5); } }
+  .notif { position: absolute; left: 12px; right: 12px; top: -110px; background: rgba(255,255,255,.97); border-radius: 18px; padding: 12px 14px; display: flex; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.25); transition: top .45s cubic-bezier(.2,.9,.3,1.2); z-index: 6; }
+  .notif.show { top: 14px; }
+  .notif .ic { width: 38px; height: 38px; border-radius: 10px; background: var(--c); flex-shrink: 0; }
+  .notif b { display: block; font-size: 14px; color: #111; } .notif span { font-size: 13px; color: #444; }
+  .card { position: absolute; inset: 0; z-index: 10; background: var(--c); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px; gap: 18px; transition: opacity .45s; }
+  .card.hide { opacity: 0; pointer-events: none; }
+  .logo { width: 132px; height: 132px; border-radius: 36px; background: rgba(255,255,255,.12); display: grid; place-items: center; }
+  .card h1 { margin: 0; font-size: 44px; font-weight: 800; letter-spacing: -.02em; }
+  .card p { margin: 0; font-size: 24px; line-height: 1.3; opacity: .95; font-weight: 600; }
+  .card .hl { color: var(--a); }
+  .pill { background: var(--a); color: #1b1b1b; font-weight: 800; font-size: 22px; padding: 14px 26px; border-radius: 99px; }
+  .wa { background: #25D366; color: #fff; font-weight: 800; font-size: 26px; padding: 16px 28px; border-radius: 18px; }
+  .brand { font-size: 40px; font-weight: 800; letter-spacing: -.02em; }
+  .brand i { font-style: normal; color: var(--a); }
+  .small { font-size: 18px !important; opacity: .8 !important; }
+</style>
+</head>
+<body>
+<div class="bg1"></div><div class="bg2"></div>
+<div class="cap hide" id="cap"></div>
+<div class="phone"><div class="screen" id="screen">
+  <iframe id="app" title="Application"></iframe>
+  <div class="tap" id="tap"></div>
+  <div class="notif" id="notif"><div class="ic"></div><div><b id="nt"></b><span id="nb"></span></div></div>
+</div></div>
+<div class="card" id="intro"></div>
+<div class="card hide" id="outro"></div>
+<script>
+  const $ = (id) => document.getElementById(id);
+  window.studio = {
+    setTheme(c, a) { document.documentElement.style.setProperty('--c', c); document.documentElement.style.setProperty('--a', a); },
+    load(src) { return new Promise((r) => { $('app').onload = () => r(); $('app').src = src; }); },
+    intro(html) { $('intro').innerHTML = html; $('intro').classList.remove('hide'); },
+    hideIntro() { $('intro').classList.add('hide'); },
+    outro(html) { $('outro').innerHTML = html; $('outro').classList.remove('hide'); },
+    caption(html) {
+      const c = $('cap');
+      c.classList.add('hide');
+      setTimeout(() => { c.innerHTML = '<span>' + html + '</span>'; c.classList.remove('hide'); }, 300);
+    },
+    tap(x, y) { const t = $('tap'); t.style.left = x + 'px'; t.style.top = y + 'px'; t.classList.remove('go'); void t.offsetWidth; t.classList.add('go'); },
+    notif(title, body) { $('nt').textContent = title; $('nb').textContent = body; $('notif').classList.add('show'); },
+    hideNotif() { $('notif').classList.remove('show'); },
+  };
+</script>
+</body>
+</html>

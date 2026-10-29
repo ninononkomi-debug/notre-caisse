@@ -1,0 +1,15 @@
+:root {
+  --violet: #1E3A8A; --violet-d: #172E6E; --grad: #1E3A8A; --yellow: #F59E0B; --blue: #0F172A;
+  --bg: #F4F6FB; --text: #0F172A; --muted: #5B6478; --line: #E3E8F2; --track: #E8EDF6; --soft: #E6ECFA; --soft-t: #1E3A8A; --input: #FBFCFF;
+}
+.pub { background: #0F172A !important; }
+.tcard { text-align: left; border-left: 6px solid var(--tc); }
+.tc-ic { width: 40px; height: 40px; border-radius: 12px; background: var(--tc); color: #fff; display: grid; place-items: center; flex-shrink: 0; }
+.chip-st.gift { background: #FEF3C7; color: #92400E; }
+.tour-n { width: 32px; height: 32px; border-radius: 50%; background: var(--track); display: grid; place-items: center; font-weight: 800; flex-shrink: 0; }
+.tour.remis .tour-n { background: #DCF5E7; color: #046C3F; }
+.tour.encours .tour-n { background: var(--yellow); color: #3B2600; }
+.date-box { width: 48px; height: 50px; border-radius: 12px; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; line-height: 1.1; }
+.date-box b { font-size: 18px; } .date-box small { font-size: 11px; opacity: .9; }
+.item.mine { background: #FFF7E6; }
+.info-box.late { background: #FDE2E2; color: #B91C1C; }

@@ -1,0 +1,19 @@
+/* Ajouts communs aux démos */
+.brand-badge { width: 44px; height: 44px; border-radius: 14px; background: var(--violet); color: #fff; display: grid; place-items: center; flex-shrink: 0; }
+.role-chip { font-size: 12px; font-weight: 800; padding: 6px 10px; border-radius: 99px; background: var(--soft); color: var(--soft-t); }
+.ptile { border-radius: 14px; color: #fff; display: grid; place-items: center; flex-shrink: 0; }
+.stock-badge { min-width: 40px; text-align: center; font-weight: 800; padding: 6px 10px; border-radius: 12px; background: #DCF5E7; color: #046C3F; }
+.stock-badge.low { background: #FDE2E2; color: #B91C1C; }
+.rank { width: 22px; text-align: center; font-weight: 800; color: var(--muted); }
+.chips.scroll { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+.chips.scroll .chip { white-space: nowrap; }
+.sell-list { display: flex; flex-direction: column; gap: 6px; max-height: 42vh; overflow-y: auto; }
+.sell-item { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 14px; border: 1.5px solid var(--line); }
+.sell-item.on { border-color: var(--violet); background: var(--soft); }
+.stepper { display: flex; align-items: center; gap: 8px; }
+.stepper button { width: 34px; height: 34px; border-radius: 10px; background: var(--card); border: 1.5px solid var(--line); display: grid; place-items: center; }
+.cart { background: var(--soft); border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 4px; }
+.cart .total { border-top: 1px solid var(--line); padding-top: 6px; font-size: 17px; }
+.feat { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; font-size: 14px; }
+.card-t { display: flex; align-items: center; gap: 6px; }
+.alert-row .ptile { margin-right: 2px; }

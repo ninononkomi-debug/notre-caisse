@@ -83,6 +83,40 @@ jobs:
           cd android
           ./gradlew assembleRelease --no-daemon
           cp app/build/outputs/apk/release/app-release.apk ../Caisse-Demo.apk
+      - name: APK démo Beauté Stock
+        if: env.KEYSTORE_FILE != ''
+        env:
+          KEYSTORE_PASSWORD: lcq-Sieq0q0IAgtu0uUdWSFZxwr0E-1k
+          KEY_ALIAS: notrecaisse
+          KEY_PASSWORD: lcq-Sieq0q0IAgtu0uUdWSFZxwr0E-1k
+          VERSION_CODE: ${{ github.run_number }}
+          VERSION_NAME: 1.0.${{ github.run_number }}
+        run: |
+          OUT=$GITHUB_WORKSPACE/dist npx vite build -c demos/stock/vite.config.js
+          sed -i -E 's/applicationId "[^"]+"/applicationId "com.orlydigital.beautestock"/' android/app/build.gradle
+          sed -i -E 's#<string name="(app_name|title_activity_main)">[^<]*</string>#<string name="\1">Beauté Stock</string>#g' android/app/src/main/res/values/strings.xml
+          cp -r demos/stock/android-res/. android/app/src/main/res/
+          npx cap copy android
+          cd android
+          ./gradlew assembleRelease --no-daemon
+          cp app/build/outputs/apk/release/app-release.apk ../Beaute-Stock-Demo.apk
+      - name: APK démo Tontine Facile
+        if: env.KEYSTORE_FILE != ''
+        env:
+          KEYSTORE_PASSWORD: lcq-Sieq0q0IAgtu0uUdWSFZxwr0E-1k
+          KEY_ALIAS: notrecaisse
+          KEY_PASSWORD: lcq-Sieq0q0IAgtu0uUdWSFZxwr0E-1k
+          VERSION_CODE: ${{ github.run_number }}
+          VERSION_NAME: 1.0.${{ github.run_number }}
+        run: |
+          OUT=$GITHUB_WORKSPACE/dist npx vite build -c demos/tontine/vite.config.js
+          sed -i -E 's/applicationId "[^"]+"/applicationId "com.orlydigital.tontinefacile"/' android/app/build.gradle
+          sed -i -E 's#<string name="(app_name|title_activity_main)">[^<]*</string>#<string name="\1">Tontine Facile</string>#g' android/app/src/main/res/values/strings.xml
+          cp -r demos/tontine/android-res/. android/app/src/main/res/
+          npx cap copy android
+          cd android
+          ./gradlew assembleRelease --no-daemon
+          cp app/build/outputs/apk/release/app-release.apk ../Tontine-Facile-Demo.apk
       - uses: actions/upload-artifact@v4
         with:
           name: Notre-Caisse-apk
@@ -97,6 +131,8 @@ jobs:
           files: |
             Notre-Caisse.apk
             Caisse-Demo.apk
+            Beaute-Stock-Demo.apk
+            Tontine-Facile-Demo.apk
           make_latest: true
 
   web:

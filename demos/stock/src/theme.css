@@ -1,0 +1,5 @@
+:root {
+  --violet: #A8446A; --violet-d: #7E2F4E; --grad: #A8446A; --yellow: #D9A75B; --blue: #2B1B22;
+  --bg: #FBF5F3; --text: #2B1B22; --muted: #7A6268; --line: #F0E1DE; --track: #F3E6E3; --soft: #FBE9EE; --soft-t: #A8446A; --input: #FFFCFB;
+}
+.pub { background: #2B1B22 !important; }
