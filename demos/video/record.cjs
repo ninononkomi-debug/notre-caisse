@@ -7,6 +7,7 @@ const { execFileSync } = require('child_process');
 const BASE = 'http://localhost:8765';
 const OUT = process.argv[2];
 const ONLY = process.argv[3];
+const VOIX = JSON.parse(fs.readFileSync(process.argv[4], 'utf8'));
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const ICON = {
@@ -110,8 +111,19 @@ const VIDEOS = {
     await page.evaluate((src) => window.studio.load(src), BASE + v.src);
     await page.waitForTimeout(1500);
     const app = page.frameLocator('#app');
+    let t0 = Date.now();
+    const voix = VOIX[name];
+    const marks = [];
+    let line = 0;
+    const T = () => (Date.now() - t0) / 1000;
+    const nextLine = async () => {
+      const prev = marks[marks.length - 1];
+      if (prev) { const end = prev.t + prev.dur + 0.35; const w = (end - T()) * 1000; if (w > 0) await wait(w); }
+      marks.push({ i: line, t: T(), dur: voix[line].dur });
+      line++;
+    };
     const s = {
-      cap: (h) => page.evaluate((x) => window.studio.caption(x), h),
+      cap: async (h) => { await nextLine(); await page.evaluate((x) => window.studio.caption(x), h); },
       async tap(sel, i = 0) {
         const loc = app.locator(sel).nth(i);
         await loc.scrollIntoViewIfNeeded().catch(() => {});
@@ -138,13 +150,17 @@ const VIDEOS = {
       cdp.send('Page.screencastFrameAck', { sessionId: f.sessionId }).catch(() => {});
     });
     await cdp.send('Page.startScreencast', { format: 'jpeg', quality: 92, maxWidth: 1080, maxHeight: 1920, everyNthFrame: 1 });
-    const t0 = Date.now();
-    await wait(2600);
+    t0 = Date.now();
+    await nextLine();
+    await wait(Math.max(2600, voix[0].dur * 1000 + 300));
     await page.evaluate(() => window.studio.hideIntro());
     await wait(500);
     await v.run(s);
+    { const prev = marks[marks.length - 1]; const w = (prev.t + prev.dur + 0.4 - T()) * 1000; if (w > 0) await wait(w); }
     await page.evaluate((h) => window.studio.outro(h), v.outro);
-    await wait(4300);
+    await wait(500);
+    await nextLine();
+    await wait(voix[line - 1].dur * 1000 + 1500);
     await cdp.send('Page.stopScreencast');
     const total = (Date.now() - t0) / 1000;
     // Liste concat avec durées réelles
@@ -158,7 +174,8 @@ const VIDEOS = {
     const mp4 = path.join(OUT, `${name}.mp4`);
     execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', path.join(OUT, name + '.txt'),
       '-vf', 'scale=1080:1920:flags=lanczos,fps=30,format=yuv420p', '-c:v', 'libx264', '-preset', 'medium', '-crf', '20',
-      '-t', '30', '-movflags', '+faststart', '-an', mp4]);
+      '-movflags', '+faststart', '-an', mp4]);
+    fs.writeFileSync(path.join(OUT, name + '_marks.json'), JSON.stringify({ total, marks, files: voix.map((x) => x.file) }));
     console.log(name, 'frames', frames.length, 'durée', total.toFixed(1), 's', errs.length ? 'ERREURS ' + errs.join(' | ') : '');
     await ctx.close();
   }
