@@ -5,6 +5,7 @@ import { supabase, LOCAL_USER } from './lib/api.js';
 import { store, useStore } from './lib/store.js';
 import { getPrefs } from './lib/security.js';
 import { refreshNotifications } from './lib/notify.js';
+import { initPush, logoutPush } from './lib/push.js';
 import { LOCAL_MODE } from './config.js';
 import { ToastProvider } from './components/ui.jsx';
 import { Logo } from './components/Logo.jsx';
@@ -37,6 +38,7 @@ export default function App() {
   useEffect(() => {
     if (!user) return;
     store.init(user);
+    if (!LOCAL_MODE) initPush(user.id, () => store.refresh());
     const p = getPrefs(user.id);
     setLocked(!!(p.pinOn && p.pinHash));
   }, [user?.id]);
@@ -67,6 +69,7 @@ export default function App() {
 
   const logout = async () => {
     store.reset(); store.emit();
+    logoutPush();
     if (!LOCAL_MODE) await supabase.auth.signOut();
     setLocked(false);
   };

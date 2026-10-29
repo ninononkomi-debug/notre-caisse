@@ -66,29 +66,7 @@ async function run(s) {
     }
   }
 
-  // 2. Événements vus à l'ouverture (dépôt validé, à valider, annonce)
-  const sn = seen(s.user.id);
-  const first = !sn.init;
-  const imm = [];
-  let nid = 1000 + Math.floor(Math.random() * 1000);
-  for (const d of s.deposits) {
-    const key = `${d.id}:${d.status}`;
-    if (sn[key]) continue;
-    sn[key] = 1;
-    if (first || !prefs.notif.versements) continue;
-    if (d.submitted_by === s.user.id && d.status === 'valide') imm.push(['Dépôt validé ✓', `Votre dépôt de ${money(d.amount)} a été validé. Merci !`]);
-    if (d.submitted_by === s.user.id && d.status === 'rejete') imm.push(['Dépôt refusé', `Votre dépôt de ${money(d.amount)} a été refusé${d.reject_reason ? ` : ${d.reject_reason}` : ''}.`]);
-    if (s.isTreasurer && d.status === 'en_attente' && d.submitted_by !== s.user.id) imm.push(['Nouveau dépôt à valider', `${s.member(d.member_id)?.display_name || 'Un membre'} a déclaré ${money(d.amount)}.`]);
-  }
-  for (const a of s.announcements) {
-    if (sn['a:' + a.id]) continue;
-    sn['a:' + a.id] = 1;
-    if (!first && prefs.notif.annonces && a.author !== s.user.id) imm.push([`Annonce : ${a.title}`, a.body || 'Nouvelle annonce de la famille']);
-  }
-  sn.init = 1;
-  try { localStorage.setItem(seenKey(s.user.id), JSON.stringify(sn)); } catch (e) { /* */ }
-  for (const [title, body] of imm.slice(0, 5)) list.push({ id: nid++, title, body, schedule: { at: new Date(Date.now() + 1500), allowWhileIdle: true }, ...BASE });
-
+  // Les événements (dépôts, adhésions, annonces) arrivent en notifications push depuis le serveur.
   if (list.length) await LocalNotifications.schedule({ notifications: list });
 }
 export { today, memberStatus };

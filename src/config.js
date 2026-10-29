@@ -24,3 +24,5 @@ export const DEFAULTS = {
     { display_name: 'Maman Albertine', category: 'travailleur' },
   ],
 };
+// Identifiant public de l'application OneSignal (notifications push)
+export const ONESIGNAL_APP_ID = import.meta.env.VITE_ONESIGNAL_APP_ID || '';
